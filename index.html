@@ -1,127 +1,47 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | TestAR</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">TestAR</div>
-      </div>
-    </div>
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
+<html lang="en">
+<head>
+  <link rel="modulepreload" as="script" href="./assets/three@0.169.11.js">
+  <link rel="modulepreload" as="script" href="./assets/needle-engine@4.11.3.js">
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
+  <link rel="preload" as="fetch" href="./assets/Sandbox.glb?url" type="model/gltf+json" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preload" fetchpriority="high" as="image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTYwIDE4Ny43NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4MT0iODkuNjQiIHkxPSIxODQuODEiIHgyPSI5MC40OCIgeTI9IjIxLjg1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNjJkMzk5Ii8+PHN0b3Agb2Zmc2V0PSIuNTEiIHN0b3AtY29sb3I9IiNhY2Q4NDIiLz48c3RvcCBvZmZzZXQ9Ii45IiBzdG9wLWNvbG9yPSIjZDdkYjBhIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgxPSI2OS42OCIgeTE9IjE3OC45IiB4Mj0iNjguMDgiIHkyPSIxNi43NyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzBiYTM5OCIvPjxzdG9wIG9mZnNldD0iLjUiIHN0b3AtY29sb3I9IiM0Y2EzNTIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NmEzMGEiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iYyIgeDE9IjM2LjYiIHkxPSIxNTIuMTciIHgyPSIzNC43IiB5Mj0iODQuMTkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9Ii4xOSIgc3RvcC1jb2xvcj0iIzM2YTM4MiIvPjxzdG9wIG9mZnNldD0iLjU0IiBzdG9wLWNvbG9yPSIjNDlhNDU5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNzZhMzBiIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImQiIHgxPSIxNS44MiIgeTE9IjE1My4yNCIgeDI9IjE4IiB5Mj0iOTAuODYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyNjc4ODAiLz48c3RvcCBvZmZzZXQ9Ii41MSIgc3RvcC1jb2xvcj0iIzQ1N2E1YyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzcxNzUxNiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJlIiB4MT0iMTM1LjA4IiB5MT0iMTM1LjQzIiB4Mj0iMTQ4LjkzIiB5Mj0iNjMuNDciIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNiMGQ5MzkiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlYWRiMDQiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iZiIgeDE9Ii00MTYzLjI1IiB5MT0iMjI4NS4xMiIgeDI9Ii00MTYwLjgxIiB5Mj0iMjIxNS4zNCIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgyMCA0MDg4LjQ5IDEzMzE2LjcxMikiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9Ii4xNyIgc3RvcC1jb2xvcj0iIzc0YWY1MiIvPjxzdG9wIG9mZnNldD0iLjQ4IiBzdG9wLWNvbG9yPSIjOTliZTMyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYzBjNDBhIi8+PC9saW5lYXJHcmFkaWVudD48c3ltYm9sIGlkPSJnIiB2aWV3Qm94PSIwIDAgMTYwIDE4Ny43NCI+PHBhdGggc3R5bGU9ImZpbGw6dXJsKCNhKSIgZD0iTTc5LjMyIDM2Ljk4djE1MC43Nkw5NSAxNzQuNTRsNi41OS0xNTYuMzEtMjIuMjcgMTguNzV6Ii8+PHBhdGggc3R5bGU9ImZpbGw6dXJsKCNiKSIgZD0iTTc5LjMyIDM2Ljk4IDU3LjA1IDE4LjIzbDYuNTkgMTU2LjMxIDE1LjY4IDEzLjJWMzYuOTh6Ii8+PHBhdGggc3R5bGU9ImZpbGw6dXJsKCNjKSIgZD0ibTI1LjE5IDEwNC44MyA4LjYzIDQ5LjA0IDEyLjUtMTQuOTUtMi40Ni01Ni40Mi0xOC42NyAyMi4zM3oiLz48cGF0aCBzdHlsZT0iZmlsbDp1cmwoI2QpIiBkPSJNMjUuMTkgMTA0LjgzIDAgOTAuMjRsMTYuOTcgNTMuODYgMTYuODUgOS43Ny04LjYzLTQ5LjA0eiIvPjxwYXRoIHN0eWxlPSJmaWxsOiM5YzMiIGQ9Ik00My44NiA4Mi41IDE4LjY5IDY3Ljk4IDAgOTAuMjRsMjUuMTggMTQuNTlMNDMuODYgODIuNXoiLz48cGF0aCBzdHlsZT0iZmlsbDp1cmwoI2UpIiBkPSJtMTM0LjgyIDc4LjY5LTkuOTcgNTYuNSAxNS41OC05LjA0TDE2MCA2NC4xbC0yNS4xOCAxNC41OXoiLz48cGF0aCBzdHlsZT0iZmlsbDp1cmwoI2YpIiBkPSJtMTM0LjgyIDc4LjY5LTE4LjY4LTIyLjMzLTIuODYgNjUgMTEuNTcgMTMuODMgOS45Ny01Ni41eiIvPjxwYXRoIHN0eWxlPSJmaWxsOiNmZmUxMTMiIGQ9Im0xNjAgNjQuMS0xOC42OS0yMi4yNi0yNS4xNyAxNC41MiAxOC42NyAyMi4zM0wxNjAgNjQuMXoiLz48cGF0aCBzdHlsZT0iZmlsbDojZjNlNjAwIiBkPSJNMTAxLjU5IDE4LjIzIDc5LjMyIDAgNTcuMDUgMTguMjNsMjIuMjcgMTguNzUgMjIuMjctMTguNzV6Ii8+PC9zeW1ib2w+PC9kZWZzPjx1c2Ugd2lkdGg9IjE2MCIgaGVpZ2h0PSIxODcuNzQiIHhsaW5rOmhyZWY9IiNnIi8+PC9zdmc+" type="image/svg+xml">
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/7cbf7baea42560cf73dd4e84c8297053.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/8456103e3176b0f85f047e2a8efc2b76.data",
-        frameworkUrl: buildUrl + "/ac2f56c40e472b06b31f1f4da8647ff1.framework.js",
-        codeUrl: buildUrl + "/69c7ce0065087fdf625bb0fcd6d6f73f.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "TestAR",
-        productVersion: "0.1.0",
-        showBanner: unityShowBanner,
-      };
+  <meta name="og:title" content="Collaborative Sandbox">
+  <meta name="description" content="Networking, WebXR, Drag & Duplicate">
+  <meta name="og:description" content="Networking, WebXR, Drag & Duplicate">
+  <meta name="generator" content="Unity 6000.0.33f1, Needle Engine Integration @4.11.3">
+  <meta name="needle-engine" content="4.11.3">
+  <meta name="needle:buildtime" content="2025-10-23T20:38:30.738Z">
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+  <meta charset="UTF-8" />
+  <link rel="icon" href="./assets/favicon.8d99ceea.ico">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
 
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
+  <title>Collaborative Sandbox</title>
+  
+  
+  
+  
+  
+  <meta name="robots" content="index,follow">
+  <meta name="url" content="https://needle.tools">
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+  
+  <script type="module" crossorigin src="./assets/index-0cfc5465.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/three@0.169.11.js">
+  <link rel="modulepreload" crossorigin href="./assets/three-examples.d0f093e2.js">
+  <link rel="modulepreload" crossorigin href="./assets/gltf-progressive.02f2c162.js">
+  <link rel="stylesheet" href="./assets/index.7f6e353c.css">
+</head>
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
+<body>
+  <script>/* needle: fix for peerjs */ window.global = window; var parcelRequire;</script>
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
-
-      document.querySelector("#unity-loading-bar").style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
-    </script>
-  </body>
+  
+  
+  <needle-engine></needle-engine>
+</body>
 </html>
